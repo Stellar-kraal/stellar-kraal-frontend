@@ -1,0 +1,41 @@
+version: '3.9'
+
+# ── E2E Test Stack ─────────────────────────────────────────────────────
+# Spins up the frontend and runs Playwright tests against it.
+# All backend APIs are mocked at the Playwright level — no real backend
+# or Soroban sandbox needed.
+
+services:
+  # ── Frontend ──────────────────────────────────────────────────────────
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - '3000:3000'
+    environment:
+      - NODE_ENV=production
+      - NEXT_PUBLIC_API_URL=http://localhost:3001
+      - NEXT_PUBLIC_NETWORK=TESTNET
+      - NEXT_PUBLIC_NETWORK_PASSPHRASE=Test SDF Network ; September 2015
+    healthcheck:
+      test: ['CMD', 'wget', '--spider', 'http://localhost:3000']
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  # ── Playwright E2E Runner ─────────────────────────────────────────────
+  e2e-runner:
+    build:
+      context: .
+      dockerfile: Dockerfile.e2e
+    environment:
+      - BASE_URL=http://frontend:3000
+      - CI=true
+    depends_on:
+      frontend:
+        condition: service_healthy
+    volumes:
+      - ./playwright-report:/app/playwright-report
+      - ./e2e/snapshots:/app/e2e/snapshots

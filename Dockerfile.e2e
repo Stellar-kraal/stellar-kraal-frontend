@@ -1,0 +1,20 @@
+# ── Playwright E2E Runner Dockerfile ──────────────────────────────────────
+# Uses the official Playwright image which includes Chromium + system deps.
+
+FROM mcr.microsoft.com/playwright:v1.52.0-focal
+
+WORKDIR /app
+
+# Copy package files and install dependencies
+COPY package.json package-lock.json ./
+RUN npm ci
+
+# Install Playwright browsers (already included in the image, but ensure)
+RUN npx playwright install chromium 2>/dev/null || true
+
+# Copy test code
+COPY playwright.config.ts tsconfig.json ./
+COPY e2e/ ./e2e/
+
+# Default command — run the E2E tests
+CMD ["npx", "playwright", "test"]
