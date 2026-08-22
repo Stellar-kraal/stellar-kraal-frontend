@@ -56,7 +56,7 @@ flowchart LR
 - npm
 - Docker & Docker Compose (for containerized setup)
 - Rust toolchain and `stellar-cli` for contract work
-- Freighter browser extension for wallet integration
+- Freighter browser extension for wallet integration (desktop), or a WalletConnect-compatible / SEP-0007-compatible mobile wallet (e.g. Lobstr) for the "Connect Mobile Wallet" QR flow
 
 ### Clone and setup
 

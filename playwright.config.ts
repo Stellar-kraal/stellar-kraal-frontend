@@ -12,7 +12,7 @@ export default defineConfig({
   reporter: [
     ['html', { outputFolder: 'playwright-report' }],
     ['list'],
-    ...(process.env.CI ? [['github']] : []),
+    ...(process.env.CI ? [['github'] as const] : []),
   ],
   timeout: 60_000,
   expect: {
